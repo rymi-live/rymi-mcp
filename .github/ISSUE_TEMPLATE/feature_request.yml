@@ -1,0 +1,11 @@
+name: Feature request
+description: Request an MCP server improvement
+labels: [enhancement]
+body:
+  - type: textarea
+    id: request
+    attributes:
+      label: What should be added?
+      description: Describe the tool, resource, or behavior you need.
+    validations:
+      required: true
