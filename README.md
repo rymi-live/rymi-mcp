@@ -1,12 +1,12 @@
 # @rymi/mcp
 
-MCP server for [Rymi](https://rymi.ai) — lets any MCP-capable AI client (Claude Desktop, Claude Code, Cursor, or a Rymi voice agent) create and manage AI voice agents without writing HTTP code.
+MCP server for [Rymi](https://rymi.live) — lets any MCP-capable AI client (Claude Desktop, Claude Code, Cursor, or a Rymi voice agent) create and manage AI voice agents without writing HTTP code.
 
-## Quickstart
+## Two ways to run it
 
-No install needed. Point your client at `https://mcp.rymi.live` and pass your API key as a Bearer token.
+### Hosted (no install)
 
-## Claude Desktop config
+Point your client at `https://mcp.rymi.live` and pass your API key as a Bearer token.
 
 ```json
 {
@@ -21,6 +21,26 @@ No install needed. Point your client at `https://mcp.rymi.live` and pass your AP
   }
 }
 ```
+
+### Local (npm)
+
+Run the server on your own machine with `npx` — it speaks **stdio** by default and talks to the Rymi REST API directly. The key is read from the `RYMI_API_KEY` environment variable.
+
+```json
+{
+  "mcpServers": {
+    "rymi": {
+      "command": "npx",
+      "args": ["-y", "@rymi/mcp"],
+      "env": {
+        "RYMI_API_KEY": "rymi_your_secret_key"
+      }
+    }
+  }
+}
+```
+
+**Options:** `RYMI_MCP_READONLY=1` hides every mutating tool (including `create_call`, `batch_call`, `publish_agent`); `--transport http` + `RYMI_MCP_PORT` serve over HTTP instead of stdio.
 
 ## Tools
 
@@ -40,10 +60,10 @@ No install needed. Point your client at `https://mcp.rymi.live` and pass your AP
 
 **Keys (read-only):** `list_publishable_keys`
 
-**Gated tools:**
+**Gated tools** (`create_call`, `batch_call` place real, billable outbound calls; `publish_agent` flips an agent live to end users):
 
-- `create_call`, `batch_call` — place real, billable outbound calls.
-- `publish_agent` — flips an agent live to end users.
+- **Hosted** `mcp.rymi.live` — disabled by default; enable per API key from the dashboard.
+- **Local** `@rymi/mcp` — enabled by default; pass `RYMI_MCP_READONLY=1` (or use a read-only key) to hide all mutating tools.
 
 > Carrier connect/disconnect and publishable-key creation/revocation are intentionally **not** exposed over MCP (they enter credentials and change standing configuration) — do those from the dashboard.
 
@@ -62,4 +82,4 @@ No install needed. Point your client at `https://mcp.rymi.live` and pass your AP
 
 ## Documentation
 
-[rymi.ai/docs/api/mcp](https://docs.rymi.live/api/mcp)
+[docs.rymi.live/api/mcp](https://docs.rymi.live/api/mcp)

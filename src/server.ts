@@ -11,13 +11,14 @@ import { registerPublishTool } from './tools/publish.js';
 import { registerDncTools } from './tools/dnc.js';
 import { registerWebhookTools } from './tools/webhooks.js';
 import { registerBillingControlTools } from './tools/billing.js';
+import pkg from '../package.json';
 
 export function createServer(apiKey: string): McpServer {
     const rymi = new Rymi({ apiKey });
 
     const server = new McpServer({
         name: 'rymi',
-        version: '0.5.0',
+        version: pkg.version,
     });
 
     const isReadOnly = process.env.RYMI_MCP_READONLY === '1';

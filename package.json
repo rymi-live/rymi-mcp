@@ -1,6 +1,6 @@
 {
     "name": "@rymi/mcp",
-    "version": "0.6.1",
+    "version": "0.6.2",
     "description": "Rymi MCP server — manage AI voice agents via Model Context Protocol",
     "license": "MIT",
     "author": "Rymi AI <engineering@rymi.live>",
