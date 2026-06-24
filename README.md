@@ -75,7 +75,7 @@ Run the server on your own machine with `npx` — it speaks **stdio** by default
 - **Model stack** — pin `llm_provider` + `llm_model`, and optionally `stt_provider`/`stt_model` and `tts_provider`/`tts_model`. Realtime LLMs (and Deepgram TTS) carry their own voice, so leave `voice` empty for those.
 - **Fallbacks** — `llm_fallback_*`, `stt_fallback_*`, `tts_fallback_*` set a secondary provider/model per channel. Pass `null` to clear.
 - **Self-hosted endpoints** (Enterprise) — `custom_llm_url`, `custom_voice_url` (+ `custom_voice_mode`), `custom_transcriber_url`. `https://` or `wss://` only; `null` clears.
-- **`agent_role`** — the cost/capability tier (`operator` → `concierge`). `concierge` unlocks realtime models. The chosen LLM model must fit the role's cost ceiling.
+- **`agent_role`** — the pricing tier (`operator` → `concierge`) for a Rymi-Curated agent, and the seed for default model selection. It no longer gates which models you can pick — any model is allowed on any role. Custom agents are billed by component cost + a flat $0.02/min fee regardless of role.
 - **`persona`** — note that `callerPersonas` entries are objects of shape `{ type, approach, detectedWhen }`, not plain strings.
 
 `provider_config` is server-derived (recomputed from role + supported languages on every write) and is not accepted as an input.
