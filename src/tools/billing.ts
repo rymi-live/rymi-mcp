@@ -6,9 +6,11 @@ import { withToolErrors } from '../utils/errors.js';
 export function registerBillingControlTools(server: McpServer, rymi: InstanceType<typeof Rymi>, isReadOnly: boolean) {
     server.tool(
         'estimate_call_cost',
-        'Estimate how much balance a call will consume for a given tier and duration. Results are usage estimates; surface remaining balance to customers in minutes.',
+        'Estimate how much balance a call will consume for a custom model stack and duration. Results are usage estimates; surface remaining balance to customers in minutes.',
         {
-            tier: z.enum(['operator', 'specialist', 'executive', 'concierge']).optional(),
+            stt_model: z.string().optional(),
+            llm_model: z.string().optional(),
+            tts_model: z.string().optional(),
             duration_seconds: z.number().min(0).optional(),
         },
         withToolErrors(async (params) => {
