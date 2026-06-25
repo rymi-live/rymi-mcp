@@ -1,10 +1,25 @@
+<div align="center">
+
 # @rymi/mcp
 
-MCP server for [Rymi](https://rymi.live) — lets any MCP-capable AI client (Claude Desktop, Claude Code, Cursor, or a Rymi voice agent) create and manage AI voice agents without writing HTTP code.
+### The [**Rymi**](https://rymi.live) MCP server — create and manage AI voice agents from any MCP-capable client.
 
-## Two ways to run it
+Point Claude Desktop, Claude Code, Cursor, or a Rymi voice agent at this server and manage your entire voice-agent fleet — agents, calls, numbers, knowledge, and usage — without writing a line of HTTP code.
 
-### Hosted (no install)
+[![npm version](https://img.shields.io/npm/v/@rymi/mcp?color=6366f1&label=npm&logo=npm)](https://www.npmjs.com/package/@rymi/mcp)
+[![npm downloads](https://img.shields.io/npm/dm/@rymi/mcp?color=8b5cf6&logo=npm)](https://www.npmjs.com/package/@rymi/mcp)
+[![MCP](https://img.shields.io/badge/Model_Context_Protocol-compatible-8b5cf6)](https://modelcontextprotocol.io)
+[![license](https://img.shields.io/badge/license-MIT-22d3ee)](./LICENSE)
+
+[**Documentation**](https://docs.rymi.live/api/mcp) · [**Dashboard**](https://rymi.live) · [**Node SDK**](https://www.npmjs.com/package/@rymi/node) · [**Python SDK**](https://pypi.org/project/rymi/)
+
+</div>
+
+---
+
+## 🚀 Two ways to run it
+
+### ☁️ Hosted — no install
 
 Point your client at `https://mcp.rymi.live` and pass your API key as a Bearer token.
 
@@ -22,9 +37,9 @@ Point your client at `https://mcp.rymi.live` and pass your API key as a Bearer t
 }
 ```
 
-### Local (npm)
+### 💻 Local — via npx
 
-Run the server on your own machine with `npx` — it speaks **stdio** by default and talks to the Rymi REST API directly. The key is read from the `RYMI_API_KEY` environment variable.
+Run the server on your own machine — it speaks **stdio** by default and talks to the Rymi REST API directly. The key is read from the `RYMI_API_KEY` environment variable.
 
 ```json
 {
@@ -40,36 +55,63 @@ Run the server on your own machine with `npx` — it speaks **stdio** by default
 }
 ```
 
-**Options:** `RYMI_MCP_READONLY=1` hides every mutating tool (including `create_call`, `batch_call`, `publish_agent`); `--transport http` + `RYMI_MCP_PORT` serve over HTTP instead of stdio.
+> **Options:** `RYMI_MCP_READONLY=1` hides every mutating tool (including `create_call`, `batch_call`, `publish_agent`). `--transport http` + `RYMI_MCP_PORT` serve over HTTP instead of stdio.
 
-## Tools
+## 🧰 Tools
 
-**Agents:** `list_agents` · `get_agent` · `create_agent` · `update_agent` · `delete_agent` · `clone_agent` · `apply_agent_changes` · `generate_agent_draft` · `enrich_company` · `validate_agent_publish` · `preview_stack`
+<table>
+<tr><th>Group</th><th>Tools</th></tr>
+<tr>
+<td><b>Agents</b></td>
+<td><code>list_agents</code> · <code>get_agent</code> · <code>create_agent</code> · <code>update_agent</code> · <code>delete_agent</code> · <code>clone_agent</code> · <code>apply_agent_changes</code> · <code>generate_agent_draft</code> · <code>enrich_company</code> · <code>validate_agent_publish</code> · <code>preview_stack</code></td>
+</tr>
+<tr>
+<td><b>Discovery</b></td>
+<td><code>list_llm_options</code> · <code>list_voices</code></td>
+</tr>
+<tr>
+<td><b>Knowledge & history</b></td>
+<td><code>list_knowledge_sources</code> · <code>add_knowledge_source</code> · <code>delete_knowledge_source</code> · <code>list_agent_changes</code> · <code>undo_agent_change</code></td>
+</tr>
+<tr>
+<td><b>Insight</b></td>
+<td><code>get_usage_summary</code> (minutes-based) · <code>list_agent_templates</code> · <code>run_evals</code> · <code>list_eval_runs</code> · <code>get_eval_run</code></td>
+</tr>
+<tr>
+<td><b>Calls</b> <sub>(read-only)</sub></td>
+<td><code>list_calls</code> · <code>list_active_calls</code> · <code>get_call</code> · <code>get_call_summary</code> · <code>get_call_transcript</code> · <code>get_call_recording</code> · <code>get_call_queue_stats</code> · <code>reprocess_call</code> · <code>list_calls_for_agent</code></td>
+</tr>
+<tr>
+<td><b>Numbers</b></td>
+<td><code>list_numbers</code> · <code>register_number</code> · <code>attach_number</code> · <code>remove_number</code></td>
+</tr>
+<tr>
+<td><b>Telephony</b> <sub>(read-only)</sub></td>
+<td><code>telephony_status</code> · <code>list_telephony_numbers</code></td>
+</tr>
+<tr>
+<td><b>Keys</b> <sub>(read-only)</sub></td>
+<td><code>list_publishable_keys</code></td>
+</tr>
+</table>
 
-**Discovery:** `list_llm_options` · `list_voices`
+### ⚠️ Gated tools
 
-**Knowledge & history:** `list_knowledge_sources` · `add_knowledge_source` · `delete_knowledge_source` · `list_agent_changes` · `undo_agent_change`
-
-**Insight:** `get_usage_summary` (minutes-based) · `list_agent_templates` · `run_evals` · `list_eval_runs` · `get_eval_run`
-
-**Calls (read-only):** `list_calls` · `list_active_calls` · `get_call` · `get_call_summary` · `get_call_transcript` · `get_call_recording` · `get_call_queue_stats` · `reprocess_call` · `list_calls_for_agent`
-
-**Numbers:** `list_numbers` · `register_number` · `attach_number` · `remove_number`
-
-**Telephony (read-only):** `telephony_status` · `list_telephony_numbers`
-
-**Keys (read-only):** `list_publishable_keys`
-
-**Gated tools** (`create_call`, `batch_call` place real, billable outbound calls; `publish_agent` flips an agent live to end users):
+`create_call` and `batch_call` place **real, billable** outbound calls; `publish_agent` flips an agent **live** to end users.
 
 - **Hosted** `mcp.rymi.live` — disabled by default; enable per API key from the dashboard.
 - **Local** `@rymi/mcp` — enabled by default; pass `RYMI_MCP_READONLY=1` (or use a read-only key) to hide all mutating tools.
 
 > Carrier connect/disconnect and publishable-key creation/revocation are intentionally **not** exposed over MCP (they enter credentials and change standing configuration) — do those from the dashboard.
 
-## Configuring an agent
+## ⚙️ Configuring an agent
 
 `create_agent` and `update_agent` accept the full agent configuration surface. Always call `list_llm_options` first to get valid model and voice IDs.
+
+<details>
+<summary><b>Configuration reference</b></summary>
+
+<br>
 
 - **Multi-language / bilingual** — set `supported_languages` to every BCP-47 tag the agent should handle, e.g. `["hi-IN","en-US"]`. The primary `language` is merged in automatically. The server resolves the per-language model stack for you; some languages may require a higher `agent_role`.
 - **Model stack** — pin `llm_provider` + `llm_model`, and optionally `stt_provider`/`stt_model` and `tts_provider`/`tts_model`. Realtime LLMs (and Deepgram TTS) carry their own voice, so leave `voice` empty for those.
@@ -80,6 +122,12 @@ Run the server on your own machine with `npx` — it speaks **stdio** by default
 
 `provider_config` is server-derived (recomputed from role + supported languages on every write) and is not accepted as an input.
 
-## Documentation
+</details>
 
-[docs.rymi.live/api/mcp](https://docs.rymi.live/api/mcp)
+## 📖 Documentation
+
+Full reference and guides: [**docs.rymi.live/api/mcp**](https://docs.rymi.live/api/mcp)
+
+## 📄 License
+
+[MIT](./LICENSE) © Rymi
