@@ -16,7 +16,7 @@ const agentConfigFields = {
     language: z.string().optional().describe('Primary BCP-47 language tag (e.g. "hi-IN", "en-US").'),
     supported_languages: z.array(z.string()).optional().describe('All BCP-47 languages the agent should handle, e.g. ["hi-IN","en-US"] for a bilingual agent. The primary `language` is added automatically if omitted here.'),
     llm_provider: z.enum(['gemini', 'openai', 'anthropic', 'sarvam']).optional(),
-    llm_model: z.string().optional().describe('LLM model id from list_llm_options (e.g. "gemini-2.5-flash", "sarvam-m"). Must fit the agent_role cost tier.'),
+    llm_model: z.string().optional().describe('LLM model id from list_llm_options (e.g. "gemini-2.5-flash", "sarvam-m").'),
     llm_fallback_provider: z.string().nullable().optional().describe('Fallback LLM provider; null clears it.'),
     llm_fallback_model: z.string().nullable().optional().describe('Fallback LLM model; null clears it.'),
     stt_provider: z.string().optional().describe('Speech-to-text provider (e.g. "deepgram", "sarvam").'),
@@ -31,7 +31,6 @@ const agentConfigFields = {
     custom_voice_url: z.string().nullable().optional().describe('Self-hosted TTS endpoint (https:// or wss://). Enterprise only; null clears.'),
     custom_voice_mode: z.enum(['rymi', 'openai-compat']).optional().describe('Wire format for custom_voice_url.'),
     custom_transcriber_url: z.string().nullable().optional().describe('Self-hosted STT endpoint (https:// or wss://). Enterprise only; null clears.'),
-    agent_role: z.enum(['operator', 'specialist', 'executive', 'concierge']).optional().describe('Cost/capability tier. "concierge" unlocks realtime models; higher tiers cost more.'),
     prompt_mode: z.enum(['builder', 'raw']).optional().describe('How the system prompt is interpreted: "builder" (server structures persona/playbook from system_prompt) or "raw" (use system_prompt verbatim — requires system_prompt). Defaults to "builder".'),
     persona: z.record(z.any()).optional().describe('Persona object. Note: callerPersonas must be objects of shape {type, approach, detectedWhen}, NOT plain strings.'),
     playbook: z.record(z.any()).optional().describe('Playbook configuration object'),
@@ -48,8 +47,7 @@ function ok(result: unknown): ToolResult {
 }
 
 /**
- * Surface an SDK/API failure (e.g. a RymiError from the role↔model tier guard)
- * as a clean, structured tool error instead of a raw thrown rejection, so the
+ * Surface an SDK/API failure as a clean, structured tool error instead of a raw thrown rejection, so the
  * calling model gets an actionable {error, code} payload.
  */
 function fail(err: unknown): ToolResult {
@@ -138,10 +136,9 @@ export function registerAgentTools(server: McpServer, rymi: InstanceType<typeof 
 
     server.tool(
         'preview_stack',
-        'Preview the resolved per-language model stack (STT/LLM/TTS), blockers, warnings, model diffs, and any required role upgrades for a set of supported languages — without saving. Use before create/update to confirm a multi-language setup is valid. Note: the concierge (realtime) role is not supported here.',
+        'Preview the resolved per-language model stack (STT/LLM/TTS), blockers, warnings, and model diffs for a set of supported languages — without saving. Use before create/update to confirm a multi-language setup is valid.',
         {
             supported_languages: z.array(z.string()).min(1).describe('BCP-47 languages to resolve a stack for, e.g. ["hi-IN","en-US"].'),
-            agent_role: z.enum(['operator', 'specialist', 'executive']).optional().describe('Role to resolve the stack for (default operator).'),
             language: z.string().optional().describe('Primary BCP-47 language (defaults to the first supported language).'),
             current_provider_config: z.record(z.any()).optional().describe('Existing provider_config to diff against, if any.'),
         },

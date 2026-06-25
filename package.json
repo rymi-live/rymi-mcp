@@ -1,60 +1,60 @@
 {
-    "name": "@rymi/mcp",
-    "version": "0.6.2",
-    "description": "Rymi MCP server — manage AI voice agents via Model Context Protocol",
-    "license": "MIT",
-    "author": "Rymi AI <engineering@rymi.live>",
-    "homepage": "https://rymi.live",
-    "keywords": [
-        "mcp",
-        "model-context-protocol",
-        "voice-ai",
-        "voice-agent",
-        "claude",
-        "cursor",
-        "rymi"
-    ],
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/rymi-live/rymi-mcp.git"
-    },
-    "bugs": {
-        "url": "https://github.com/rymi-live/rymi-mcp/issues"
-    },
-    "publishConfig": {
-        "access": "public",
-        "provenance": true
-    },
-    "main": "./dist/index.js",
-    "types": "./dist/index.d.ts",
-    "bin": {
-        "rymi-mcp": "./dist/index.js"
-    },
-    "exports": {
-        ".": {
-            "types": "./dist/index.d.ts",
-            "require": "./dist/index.js"
-        }
-    },
-    "scripts": {
-        "build": "tsup src/index.ts --format cjs --dts --clean",
-        "dev": "tsup src/index.ts --format cjs --watch",
-        "lint": "tsc --noEmit",
-        "test": "vitest run"
-    },
-    "dependencies": {
-        "@modelcontextprotocol/sdk": "^1.11.1",
-        "@rymi/node": "workspace:*",
-        "zod": "^3.23.0"
-    },
-    "devDependencies": {
-        "tsup": "^8.0.0",
-        "typescript": "^5.0.0",
-        "vitest": "^1.6.0"
-    },
-    "files": [
-        "dist",
-        "README.md",
-        "LICENSE"
-    ]
+  "name": "@rymi/mcp",
+  "version": "1.0.0",
+  "description": "Rymi MCP server \u2014 manage AI voice agents via Model Context Protocol",
+  "license": "MIT",
+  "author": "Rymi AI <engineering@rymi.live>",
+  "homepage": "https://rymi.live",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "voice-ai",
+    "voice-agent",
+    "claude",
+    "cursor",
+    "rymi"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rymi-live/rymi-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rymi-live/rymi-mcp/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "rymi-mcp": "./dist/index.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs --dts --clean",
+    "dev": "tsup src/index.ts --format cjs --watch",
+    "lint": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.11.1",
+    "@rymi/node": "workspace:*",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.6.0"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ]
 }
