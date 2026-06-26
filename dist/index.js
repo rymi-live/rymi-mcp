@@ -35,7 +35,7 @@ var agentConfigFields = {
   language: import_zod.z.string().optional().describe('Primary BCP-47 language tag (e.g. "hi-IN", "en-US").'),
   supported_languages: import_zod.z.array(import_zod.z.string()).optional().describe('All BCP-47 languages the agent should handle, e.g. ["hi-IN","en-US"] for a bilingual agent. The primary `language` is added automatically if omitted here.'),
   llm_provider: import_zod.z.enum(["gemini", "openai", "anthropic", "sarvam"]).optional(),
-  llm_model: import_zod.z.string().optional().describe('LLM model id from list_llm_options (e.g. "gemini-2.5-flash", "sarvam-m"). Must fit the agent_role cost tier.'),
+  llm_model: import_zod.z.string().optional().describe('LLM model id from list_llm_options (e.g. "gemini-2.5-flash", "sarvam-m").'),
   llm_fallback_provider: import_zod.z.string().nullable().optional().describe("Fallback LLM provider; null clears it."),
   llm_fallback_model: import_zod.z.string().nullable().optional().describe("Fallback LLM model; null clears it."),
   stt_provider: import_zod.z.string().optional().describe('Speech-to-text provider (e.g. "deepgram", "sarvam").'),
@@ -50,7 +50,6 @@ var agentConfigFields = {
   custom_voice_url: import_zod.z.string().nullable().optional().describe("Self-hosted TTS endpoint (https:// or wss://). Enterprise only; null clears."),
   custom_voice_mode: import_zod.z.enum(["rymi", "openai-compat"]).optional().describe("Wire format for custom_voice_url."),
   custom_transcriber_url: import_zod.z.string().nullable().optional().describe("Self-hosted STT endpoint (https:// or wss://). Enterprise only; null clears."),
-  agent_role: import_zod.z.enum(["operator", "specialist", "executive", "concierge"]).optional().describe('Cost/capability tier. "concierge" unlocks realtime models; higher tiers cost more.'),
   prompt_mode: import_zod.z.enum(["builder", "raw"]).optional().describe('How the system prompt is interpreted: "builder" (server structures persona/playbook from system_prompt) or "raw" (use system_prompt verbatim \u2014 requires system_prompt). Defaults to "builder".'),
   persona: import_zod.z.record(import_zod.z.any()).optional().describe("Persona object. Note: callerPersonas must be objects of shape {type, approach, detectedWhen}, NOT plain strings."),
   playbook: import_zod.z.record(import_zod.z.any()).optional().describe("Playbook configuration object"),
@@ -136,10 +135,9 @@ function registerAgentTools(server, rymi, isReadOnly = false) {
   );
   server.tool(
     "preview_stack",
-    "Preview the resolved per-language model stack (STT/LLM/TTS), blockers, warnings, model diffs, and any required role upgrades for a set of supported languages \u2014 without saving. Use before create/update to confirm a multi-language setup is valid. Note: the concierge (realtime) role is not supported here.",
+    "Preview the resolved per-language model stack (STT/LLM/TTS), blockers, warnings, and model diffs for a set of supported languages \u2014 without saving. Use before create/update to confirm a multi-language setup is valid.",
     {
       supported_languages: import_zod.z.array(import_zod.z.string()).min(1).describe('BCP-47 languages to resolve a stack for, e.g. ["hi-IN","en-US"].'),
-      agent_role: import_zod.z.enum(["operator", "specialist", "executive"]).optional().describe("Role to resolve the stack for (default operator)."),
       language: import_zod.z.string().optional().describe("Primary BCP-47 language (defaults to the first supported language)."),
       current_provider_config: import_zod.z.record(import_zod.z.any()).optional().describe("Existing provider_config to diff against, if any.")
     },
@@ -677,31 +675,24 @@ var import_zod6 = require("zod");
 function registerPublishTool(server, rymi) {
   server.tool(
     "publish_agent",
-    "Publish a Rymi voice agent to make it live. IMPORTANT: this immediately makes the agent callable by end users.",
+    "Publish a Rymi voice agent to make its current saved configuration live. IMPORTANT: this immediately makes the agent callable by end users. Returns published:false with a blockers list when the config has unresolved issues.",
     {
       agent_id: import_zod6.z.string().uuid().describe("The agent UUID to publish")
     },
     async ({ agent_id }) => {
-      const validation = await rymi.agents.validatePublish({ agent_id });
-      if (!validation.valid) {
+      try {
+        const result = await rymi.agents.publish(agent_id);
         return {
-          content: [{
-            type: "text",
-            text: JSON.stringify({ published: false, reason: "Validation failed", details: validation }, null, 2)
-          }]
+          isError: result.published ? void 0 : true,
+          content: [{ type: "text", text: JSON.stringify(result, null, 2) }]
         };
+      } catch (err) {
+        const e = err;
+        const body = { published: false, error: e?.message || String(err) };
+        if (e?.code) body.code = e.code;
+        if (e?.status) body.status = e.status;
+        return { isError: true, content: [{ type: "text", text: JSON.stringify(body, null, 2) }] };
       }
-      return {
-        content: [{
-          type: "text",
-          text: JSON.stringify({
-            published: false,
-            reason: "publish_agent requires PUT /agents/:id status field (coming soon). Validation passed \u2014 agent is ready to publish from the Rymi dashboard.",
-            agent_id,
-            validation
-          }, null, 2)
-        }]
-      };
     }
   );
 }
@@ -830,9 +821,11 @@ var import_zod9 = require("zod");
 function registerBillingControlTools(server, rymi, isReadOnly) {
   server.tool(
     "estimate_call_cost",
-    "Estimate how much balance a call will consume for a given tier and duration. Results are usage estimates; surface remaining balance to customers in minutes.",
+    "Estimate how much balance a call will consume for a custom model stack and duration. Results are usage estimates; surface remaining balance to customers in minutes.",
     {
-      tier: import_zod9.z.enum(["operator", "specialist", "executive", "concierge"]).optional(),
+      stt_model: import_zod9.z.string().optional(),
+      llm_model: import_zod9.z.string().optional(),
+      tts_model: import_zod9.z.string().optional(),
       duration_seconds: import_zod9.z.number().min(0).optional()
     },
     withToolErrors(async (params) => {
@@ -872,7 +865,7 @@ function registerBillingControlTools(server, rymi, isReadOnly) {
 // package.json
 var package_default = {
   name: "@rymi/mcp",
-  version: "0.6.2",
+  version: "1.0.0",
   description: "Rymi MCP server \u2014 manage AI voice agents via Model Context Protocol",
   license: "MIT",
   author: "Rymi AI <engineering@rymi.live>",
