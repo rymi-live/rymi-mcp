@@ -16,7 +16,7 @@ const agentConfigFields = {
     language: z.string().optional().describe('Primary BCP-47 language tag (e.g. "hi-IN", "en-US").'),
     supported_languages: z.array(z.string()).optional().describe('All BCP-47 languages the agent should handle, e.g. ["hi-IN","en-US"] for a bilingual agent. The primary `language` is added automatically if omitted here.'),
     llm_provider: z.enum(['gemini', 'openai', 'anthropic', 'sarvam']).optional(),
-    llm_model: z.string().optional().describe('LLM model id from list_llm_options (e.g. "gemini-2.5-flash", "sarvam-m").'),
+    llm_model: z.string().optional().describe('LLM model id from list_llm_options (e.g. "gemini-2.5-flash", "sarvam-105b").'),
     llm_fallback_provider: z.string().nullable().optional().describe('Fallback LLM provider; null clears it.'),
     llm_fallback_model: z.string().nullable().optional().describe('Fallback LLM model; null clears it.'),
     stt_provider: z.string().optional().describe('Speech-to-text provider (e.g. "deepgram", "sarvam").'),
