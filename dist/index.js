@@ -657,13 +657,36 @@ function registerInsightTools(server, rymi, isReadOnly = false) {
   if (!isReadOnly) {
     server.tool(
       "run_evals",
-      'Run the evaluation suite for an agent. mode="synthetic" (default) uses the offline scorer; mode="live" runs the model-driven runner (consumes Studio AI units).',
+      'Run the evaluation suite for an agent. mode="synthetic" (default) uses the offline scorer; mode="live" runs the model-driven runner (consumes Studio AI units). Set judge=true to supplement the synthetic heuristics with an opt-in LLM judge (requires a Gemini key; consumes Studio AI units).',
       {
         agent_id: import_zod5.z.string().uuid().describe("The agent UUID to evaluate"),
-        mode: import_zod5.z.enum(["synthetic", "live"]).optional().describe("Evaluation mode (default synthetic)")
+        mode: import_zod5.z.enum(["synthetic", "live"]).optional().describe("Evaluation mode (default synthetic)"),
+        judge: import_zod5.z.boolean().optional().describe("Supplement synthetic heuristics with the LLM judge (default false)")
       },
-      async ({ agent_id, mode }) => {
-        const result = await rymi.agents.runEvals(agent_id, mode ? { mode } : {});
+      async ({ agent_id, mode, judge }) => {
+        const params = {};
+        if (mode) params.mode = mode;
+        if (judge) params.judge = judge;
+        const result = await rymi.agents.runEvals(agent_id, params);
+        return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+      }
+    );
+    server.tool(
+      "run_eval_suite",
+      "Run the eval SUITE across many agents at once (agents \xD7 seeded scenarios) with bounded concurrency. One eval run is persisted per agent (visible in the per-agent eval UI); the aggregate report is returned. Set judge=true to add the LLM judge (requires a Gemini key; consumes Studio AI units).",
+      {
+        agent_ids: import_zod5.z.array(import_zod5.z.string().uuid()).min(1).describe("Agent UUIDs to evaluate"),
+        scenario_ids: import_zod5.z.array(import_zod5.z.string()).optional().describe("Optional subset of seeded scenario ids; omit to run all"),
+        concurrency: import_zod5.z.number().int().positive().optional().describe("Max agents evaluated in parallel (clamped to a safe ceiling)"),
+        judge: import_zod5.z.boolean().optional().describe("Supplement synthetic heuristics with the LLM judge (default false)")
+      },
+      async ({ agent_ids, scenario_ids, concurrency, judge }) => {
+        const result = await rymi.agents.runEvalSuite({
+          agentIds: agent_ids,
+          ...scenario_ids ? { scenarioIds: scenario_ids } : {},
+          ...concurrency ? { concurrency } : {},
+          ...judge ? { judge } : {}
+        });
         return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
       }
     );
