@@ -1,16 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import Rymi from '@rymi/node';
-import { registerAgentTools } from './tools/agents.js';
-import { registerCallTools, registerOutboundCallTools, registerCallControlTools } from './tools/calls.js';
-import { registerNumberTools } from './tools/numbers.js';
-import { registerTelephonyTools } from './tools/telephony.js';
-import { registerKeyTools } from './tools/keys.js';
-import { registerKnowledgeTools } from './tools/knowledge.js';
-import { registerInsightTools } from './tools/insights.js';
-import { registerPublishTool } from './tools/publish.js';
-import { registerDncTools } from './tools/dnc.js';
-import { registerWebhookTools } from './tools/webhooks.js';
-import { registerBillingControlTools } from './tools/billing.js';
+import { opsToolCatalog } from '@rymi/ops-tools';
+import { withToolErrors } from './utils/errors.js';
 import pkg from '../package.json';
 
 export function createServer(apiKey: string): McpServer {
@@ -23,22 +14,21 @@ export function createServer(apiKey: string): McpServer {
 
     const isReadOnly = process.env.RYMI_MCP_READONLY === '1';
 
-    registerAgentTools(server, rymi, isReadOnly);
-    registerCallTools(server, rymi, isReadOnly);
-    registerNumberTools(server, rymi, isReadOnly);
-    registerTelephonyTools(server, rymi, isReadOnly);
-    registerKeyTools(server, rymi, isReadOnly);
-    registerKnowledgeTools(server, rymi, isReadOnly);
-    registerInsightTools(server, rymi, isReadOnly);
-    registerDncTools(server, rymi, isReadOnly);
-    registerWebhookTools(server, rymi, isReadOnly);
-    registerBillingControlTools(server, rymi, isReadOnly);
-
-    // Call Control tools (end call, add participants)
-    if (!isReadOnly) {
-        registerCallControlTools(server, rymi);
-        registerOutboundCallTools(server, rymi);
-        registerPublishTool(server, rymi);
+    // Bind the shared @rymi/ops-tools catalog to this API-key SDK client.
+    // Readonly mode now gates per-tool on risk (strictly finer than the old
+    // module-level gate); the studio harness binds the same catalog to an
+    // in-process JWT client (apps/api/src/services/harness/opsClient.ts).
+    for (const tool of opsToolCatalog) {
+        if (isReadOnly && tool.risk !== 'read') continue;
+        server.tool(
+            tool.name,
+            tool.description,
+            tool.input,
+            withToolErrors(async (params: Record<string, unknown>) => {
+                const result = await tool.run(rymi, params as never);
+                return { content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }] };
+            })
+        );
     }
 
     return server;
