@@ -6,16 +6,21 @@ target model. Normative keywords (MUST/SHOULD/MAY) apply to the target model in
 
 ## 1. Scope
 
-Covers authorization for every way a client reaches Rymi's MCP tools:
+Covers authorization for every way a client reaches Rymi's MCP tools. There are
+now exactly two:
 
-| Transport | How the caller authenticates | Who runs it | Status |
-|---|---|---|---|
-| `stdio` (default) | `RYMI_API_KEY` env var, read once at boot | The end user, locally | ships today |
-| `http` (`--transport http`) | `Authorization: Bearer <key>` per request | Rymi, or a self-hoster | ships today |
-| **hosted `/mcp`** (§7) | **OAuth 2.1, Supabase as authorization server** | **Rymi (`apps/api`)** | **target** |
+| Transport | How the caller authenticates | Who runs it |
+|---|---|---|
+| `stdio` (`npx @rymi/mcp`) | `RYMI_API_KEY` env var, read once at boot | The end user, locally |
+| hosted `mcp.rymi.live` (§7) | OAuth 2.1 (Supabase AS), **or** a `rymi_` secret key | Rymi (`apps/api`) |
 
 The hosted endpoint is what makes "add a custom connector in Claude" work
 without pasting a key. It lives in `apps/api`, not this package — see §7.1.
+
+**`--transport http` was removed in 2.0.0** (with its Dockerfile), which is why
+§4 below is struck rather than planned: the gaps it described belonged to that
+server, and deleting it closed them outright. `apps/api` now serves both
+credentials on one host, both role-gated.
 
 The MCP server is a **thin binding**, not a policy engine: it constructs a
 `@rymi/node` SDK client from the caller's key and hands it to every tool in
@@ -25,51 +30,45 @@ is only true for *tenant isolation* — it is not true for *tool-level authority
 
 ## 2. Current behaviour
 
-**stdio** — `src/index.ts:16` requires `RYMI_API_KEY`; empty means exit 1. The
-key is never validated locally; the first tool call is what discovers a bad key.
+**stdio** (`packages/mcp`) — `src/index.ts` requires `RYMI_API_KEY`; empty means
+exit 1. The key is never validated locally; the first tool call is what discovers
+a bad key. Tool gating is `src/server.ts:15` reading `RYMI_MCP_READONLY=1`, which
+registers only `risk === 'read'` tools. That is a *process-wide env flag*, set by
+whoever starts the process — in stdio the entity being restricted is the entity
+applying the restriction, so it is a footgun guard, not a security control.
 
-**http** — `src/transport/http.ts` serves `/health` unauthenticated (deliberate:
-it must answer before the auth gate for load-balancer probes), then requires
-`Authorization: Bearer <token>`. Any non-empty token is accepted and passed
-straight into `createServer(apiKey)`. A fresh `McpServer` + transport are built
-per request.
-
-**Tool gating** — `src/server.ts:15` reads `RYMI_MCP_READONLY=1` and, when set,
-registers only tools with `risk === 'read'`. This is a *process-wide env flag*.
-
-**Downstream** — the API resolves `rymi_` secret keys by SHA-256 hash against
-`developer_api_keys` (`revoked_at is null`), yielding `userId` + `tenantId`.
-Publishable keys (`rymi_pk_`, `sb_publishable_`) resolve against
-`developer_publishable_keys` and carry real restrictions (agent binding,
-`allowed_channels`, `audience`).
+**hosted `mcp.rymi.live`** (`apps/api/src/routes/mcp.ts`) — accepts an OAuth
+token (§7.5) or a `rymi_` secret key, resolved by SHA-256 against
+`developer_api_keys` (`revoked_at is null`). Publishable keys are rejected.
+Either way it resolves a tenant + role and filters the catalog through
+`resolveToolDisposition`. `POST /` is the same handler, gated on the MCP
+hostname, preserving the pre-2.0 API-key contract.
 
 ## 3. Gaps
 
-**G1 — Every secret key is a root key.** `developer_api_keys` has no scope,
-role, or capability column (`supabase/migrations/20260424000000_developer_api_keys.sql:12`).
-Any valid `rymi_` key can reach every tool in the catalog, including `risk:
-'sensitive'` ones — `batch_call`, `publish_agent`, `add_dnc_batch`,
-`set_auto_recharge`. The only lever is a server-wide env var the *caller* sets,
-which means in the stdio case the entity being restricted is the entity applying
-the restriction. It is a footgun guard, not a security control.
+**G1 — Every secret key carries its owner's full authority.**
+`developer_api_keys` has no scope column
+(`supabase/migrations/20260424000000_developer_api_keys.sql:12`), so a key cannot
+be narrower than the person who made it. On the hosted endpoint a key is now at
+least bounded by that person's **role** — an owner's key still reaches
+`batch_call`, `publish_agent`, `set_auto_recharge`. Over stdio there is no
+gating at all. §5 is the fix.
 
-**G2 — The README documents a control that doesn't exist.**
-`packages/mcp/README.md:103` says "pass `RYMI_MCP_READONLY=1` **or use a
-read-only key**". There is no such thing as a read-only key. Either build G4 or
-delete the clause.
+**G3 — `resolveToolDisposition` is bypassed over stdio.**
+`packages/ops-tools/src/policy.ts` encodes the intended model: `read → execute`,
+`write → propose`, `sensitive → confirm`, `account`-scoped writes `→ deny` for
+non-owner/admin. The studio harness honours it, and as of the consolidation so
+does the hosted endpoint. `packages/mcp` still doesn't — it has no notion of
+`TenantRole`, so every registered tool is effectively `execute`. Fixing it needs
+`/v1/me` (§5); the blast radius is one local user holding their own key.
 
-**G3 — `resolveToolDisposition` is bypassed.** `packages/ops-tools/src/policy.ts`
-already encodes the intended model: `read → execute`, `write → propose`,
-`sensitive → confirm`, and `account`-scoped writes `→ deny` for non-owner/admin.
-The studio harness honours it. The MCP binding never calls it and has no notion
-of `TenantRole`, so every tool is effectively `execute` for everyone. Two
-bindings of the same catalog disagree on authority — the MCP one is the loose one.
+~~**G2 — The README documents a control that doesn't exist.**~~ Fixed. It
+claimed a "read-only key" and per-API-key gating of billable tools on the hosted
+endpoint. Neither existed.
 
-**G4 — HTTP accepts any bearer shape.** `http.ts:20` checks only for
-non-emptiness. A publishable key (browser-safe, intentionally weak) is forwarded
-happily; so is `Bearer x`. Every invalid token costs a full round trip to the API
-before failing, and the 401 surfaces as a tool error rather than a transport
-error.
+~~**G4 — HTTP accepts any bearer shape.**~~ Closed by deleting that server.
+`apps/api` validates the credential before building anything and rejects
+publishable keys explicitly.
 
 **G5 — Not conformant with MCP authorization (2025-06-18).** For HTTP transport
 the spec requires an unauthenticated 401 to carry `WWW-Authenticate` pointing at
@@ -77,33 +76,24 @@ the spec requires an unauthenticated 401 to carry `WWW-Authenticate` pointing at
 authenticate. Rymi returns a bare JSON 401. Standard MCP clients cannot
 onboard without an out-of-band, hand-pasted key.
 
-**G6 — No DNS-rebinding protection.** `StreamableHTTPServerTransport` is
-constructed without `enableDnsRebindingProtection` / `allowedHosts` /
-`allowedOrigins`. A local HTTP server is reachable from any web page the user
-visits; the browser attaches no `Authorization` header, so §4's gate still
-rejects it — but this is one config mistake away from being live, and the MCP
-spec calls for it explicitly.
+~~**G6 — No DNS-rebinding protection.**~~ Closed. The deleted server had none;
+`apps/api` validates `Origin` against an allowlist in the route. (The transport's
+own `enableDnsRebindingProtection` option is deprecated in favour of exactly
+that.)
 
-**G7 — Per-request server leak.** Each request builds an `McpServer` and
-transport and never closes them. Not an authz bug; it sits in the authz path and
-makes an unauthenticated flood cheap to mount. Fix alongside §4.
+~~**G7 — Per-request server leak.**~~ Closed. `apps/api` closes the `McpServer`
+and transport on `reply.raw` close.
 
-## 4. Target: transport gate
+## 4. ~~Target: transport gate~~ — resolved by deletion
 
-The HTTP transport MUST reject before constructing a server:
+This section specified hardening for `packages/mcp --transport http`: reject
+before constructing a server, refuse publishable keys, close the transport, add
+DNS-rebinding protection. That server no longer exists (removed in 2.0.0, along
+with its Dockerfile), and `apps/api/src/routes/mcp.ts` does all of it.
 
-1. `/health` stays open. It MUST NOT reveal version, tenant, or tool list.
-2. Missing/malformed `Authorization` → `401` **with**
-   `WWW-Authenticate: Bearer resource_metadata="<base>/.well-known/oauth-protected-resource"`.
-3. Token not matching `^rymi_[A-Za-z0-9_-]{16,}$` → `401`, no upstream call.
-   Publishable prefixes (`rymi_pk_`, `sb_publishable_`) MUST be rejected with a
-   distinct message: publishable keys are browser-delivered and MUST NOT confer
-   MCP tool access.
-4. Server + transport MUST be closed when the request completes.
-5. `enableDnsRebindingProtection: true` with an explicit `allowedHosts` allowlist.
-
-The gate is a syntactic pre-filter. It MUST NOT be treated as authentication —
-that remains the API's hash lookup.
+Kept as a record of why the removal was the fix rather than the workaround: it
+was the only code path with these gaps, Rymi was the only deployer, and it could
+never have served OAuth without reimplementing what `apps/api` already had.
 
 ## 5. Target: per-key scopes
 
@@ -165,9 +155,11 @@ issuance, refresh, or DCR.
 | MCP Streamable HTTP endpoint (`/mcp`) | `apps/api` | ✅ `src/routes/mcp.ts` |
 | Consent UI (`/oauth/consent`) | `apps/studio` | ✅ `src/pages/OAuthConsentPage.tsx` |
 
-The endpoint belongs in `apps/api`, not `packages/mcp`: the API already holds
-the Supabase clients, tenant resolution, and Railway deploy. `packages/mcp`
-stays the stdio/npm path and keeps §4's bearer gate.
+The endpoint belongs in `apps/api`, not `packages/mcp`: the API already holds the
+Supabase clients, tenant resolution, and Railway deploy — and `createInProcessOpsClient`
+reaches them through `app.inject()`, with no network hop. A separate MCP service
+had to make real HTTP calls back to the app it was proxying. `packages/mcp` stays
+the stdio/npm path.
 
 ### 7.2 Discovery
 
@@ -200,12 +192,34 @@ failure.
 ### 7.3 Prerequisite: asymmetric JWT signing
 
 Supabase requires RS256/ES256 (not the HS256 default) to issue OIDC ID tokens,
-which the `openid` scope needs. **This is a project-wide change** — every
-existing Supabase session, every RLS check, and `auth.getUser()` in
-`apps/api/src/middleware/auth.ts:180` are downstream of the signing key. Do it
-as its own change, via Supabase's key rotation (both keys valid during
-overlap), and verify studio login + an API call under the new key **before**
-touching OAuth. Do not bundle it with the MCP work.
+which the `openid` scope needs.
+
+**Audited 2026-07-15 — the blast radius is smaller than it looks.** Rotation is
+zero-downtime by design: existing non-expired JWTs, plus the `anon` and
+`service_role` keys, stay valid and accepted. The documented ways to break an
+app on rotation are (a) code that verifies Supabase JWTs locally against the
+shared secret, and (b) Edge Functions with `verify_jwt`. Findings for this repo:
+
+- **No local verification anywhere.** Zero references to `SUPABASE_JWT_SECRET`.
+  `apps/api/src/middleware/auth.ts` uses `supabase.auth.getUser(token)`, a
+  network call that always validates against whatever key is current. The only
+  `jwt.verify` in the tree is `packages/telephony/src/providers/vonage.ts:97`,
+  against Vonage's own webhook secret — unrelated. Impersonation and LiveKit
+  use their own secrets.
+- **8 Edge Functions have `verify_jwt: true`** (`initiate-call`, `enqueue-calls`,
+  `pause-campaign`, `process-next-call`, `resume-campaign`,
+  `manage-dead-letter-queue`, `process-batch-calls`, `queue-health-monitor`) —
+  but they are **orphaned**: nothing in `apps/` or `packages/` invokes them, and
+  the three `cron.job` entries call plain SQL functions, not edge functions.
+  That work moved into `apps/api` + BullMQ.
+- PostgREST, Realtime, and GoTrue are platform-managed and follow the rotation.
+
+⚠️ **Never revoke the legacy JWT secret.** `anon` and `service_role` are not
+just API keys — they are JWTs signed by that secret, so revoking it kills
+`SUPABASE_SERVICE_KEY` (the whole API's DB access) and the browser anon key at
+once. Revocation is **not** required for OAuth; rotation alone is enough.
+Retiring the legacy secret means first migrating to `sb_publishable_` /
+`sb_secret_` keys — a separate project, unrelated to this one.
 
 ### 7.4 Consent screen
 
@@ -306,27 +320,45 @@ Settled while building `apps/api/src/routes/mcp.ts`:
 ### 7.9 What remains before a user can install
 
 **All the code is landed. Nothing else here is a code change** — what remains is
-Supabase project configuration, in this order:
+Supabase project configuration on `oplhypjwdjnpxsjfaukm`, in this order.
 
-1. **§7.3 asymmetric signing** (RS256/ES256) on the Supabase project.
-   Project-wide blast radius — land and soak on its own first.
-2. **Enable the OAuth server** (Authentication → OAuth Server), set
-   `authorization_url_path = /oauth/consent`, turn on dynamic registration
-   (§7.7). Confirmed still off as of 2026-07-15: the consent page renders
-   Supabase's own `OAuth server is disabled` error, which is the exact signal
-   this step is outstanding.
-3. Set `RYMI_MCP_RESOURCE_URL` to the exact public URL and verify
-   `/.well-known/oauth-protected-resource/mcp` serves it byte-identically.
-4. Add `https://studio.rymi.live/oauth/consent` to the project's allowed
-   redirect list if the login round-trip is rejected.
+**Step 1 — asymmetric signing** (§7.3). Dashboard → Settings → JWT Keys
+(`/project/oplhypjwdjnpxsjfaukm/settings/jwt`).
+
+1. **Migrate JWT secret** — imports the legacy secret into the signing-keys
+   system and creates an asymmetric key in **standby**. Nothing is issued with
+   it yet; safe to stop here.
+2. **Rotate keys** — new JWTs start being signed with the asymmetric key. Old
+   tokens keep working until they expire; nobody is signed out.
+3. Verify: log into studio, load Calls (a real API + RLS round trip).
+4. **Do not touch "Revoke"** — see the warning in §7.3.
+
+**Step 2 — enable the OAuth server.** Dashboard → Authentication → OAuth Server:
+
+- Enable it. Confirmed still off as of 2026-07-15: the consent page renders
+  Supabase's own `OAuth server is disabled` error — which is the exact signal
+  that this step is outstanding, and doubles as the check that it worked.
+- Set the authorization URL path to `/oauth/consent` on the studio origin.
+- Enable **dynamic client registration** (§7.7) so Claude can self-register.
+
+**Step 3 — point the resource identifier at the real URL.** Set
+`RYMI_MCP_RESOURCE_URL` to the exact public URL and confirm
+`/.well-known/oauth-protected-resource/mcp` echoes it byte-identically. A
+trailing slash is a different resource and the flow will fail.
 
 Then: Claude → Settings → Connectors → Add custom connector →
 `https://api.rymi.live/mcp`.
 
 ## 8. Non-goals
 
-Rate limiting, per-tool quotas, and audit-log shape. Impersonation tokens
-(`rymi_imp_`) are out of scope — they MUST be rejected by §4's prefix check.
+Rate limiting, per-tool quotas, and audit-log shape.
+
+Impersonation tokens (`rymi_imp_`) are out of scope. Note they **do** match the
+`rymi_` prefix, so `authenticate()` sends them down the secret-key branch — they
+are rejected because their SHA-256 has no row in `developer_api_keys`, not
+because of the prefix check. That is the correct outcome, but it rests on the
+hash lookup. If MCP ever needs to accept impersonation, give it an explicit
+branch rather than relaxing the prefix test.
 
 ## 9. Sequencing
 
@@ -337,9 +369,11 @@ Rate limiting, per-tool quotas, and audit-log shape. Impersonation tokens
 2. ✅ **§7.4 consent screen** — landed in
    `apps/studio/src/pages/OAuthConsentPage.tsx`, covered by
    `OAuthConsentPage.test.tsx`.
-3. **§7.3 asymmetric signing + dashboard enablement** — the only thing left
-   before a user can install, and not a code change. See §7.9.
-4. **§4 transport gate** — self-contained in `packages/mcp/src/transport/http.ts`,
-   unblocks nothing, do it whenever. G2 is a one-line README fix.
-5. **§5/§6 scopes + dispositions** — improves the API-key path. Note §7.5: it
-   does not contain an OAuth token, so it is not a security fix.
+3. ✅ **§4 — resolved by deleting the HTTP transport** (2.0.0). G2/G4/G6/G7
+   closed; G1/G3 now bounded by role on the hosted endpoint.
+4. **§7.3 asymmetric signing + dashboard enablement + the domain move** — all
+   that stands between here and a working install, and none of it is code.
+   See §7.9.
+5. **§5/§6 scopes + dispositions** — narrows a key below its owner's authority
+   (G1) and closes G3 for stdio. Note §7.5: it does not contain an OAuth token,
+   so it is not a security fix.

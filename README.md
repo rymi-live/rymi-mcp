@@ -19,9 +19,17 @@ Point Claude Desktop, Claude Code, Cursor, or a Rymi voice agent at this server 
 
 ## 🚀 Two ways to run it
 
-### ☁️ Hosted — no install
+### ☁️ Hosted — no install, no API key
 
-Point your client at `https://mcp.rymi.live` and pass your API key as a Bearer token.
+Add `https://mcp.rymi.live/mcp` as a custom connector and sign in. In Claude:
+**Settings → Connectors → Add custom connector**. Paste the URL exactly — no
+trailing slash, since OAuth identifies the server by that string.
+
+Signing in grants the connector everything **you** can do in Rymi, acting as
+you. Revoke any time from Settings.
+
+Clients without OAuth (and CI) can pass a secret key against the same host
+instead:
 
 ```json
 {
@@ -55,7 +63,9 @@ Run the server on your own machine — it speaks **stdio** by default and talks 
 }
 ```
 
-> **Options:** `RYMI_MCP_READONLY=1` hides every mutating tool (including `create_call`, `batch_call`, `publish_agent`). `--transport http` + `RYMI_MCP_PORT` serve over HTTP instead of stdio.
+> **Options:** `RYMI_MCP_READONLY=1` hides every mutating tool (including `create_call`, `batch_call`, `publish_agent`).
+>
+> This package speaks **stdio** only. `--transport http` was removed in 2.0.0 — use the hosted endpoint above, which the local server could never match on auth (it has no OAuth, and no per-key tool gating).
 
 ## 🧰 Tools
 
@@ -99,10 +109,12 @@ Run the server on your own machine — it speaks **stdio** by default and talks 
 
 `create_call` and `batch_call` place **real, billable** outbound calls; `publish_agent` flips an agent **live** to end users.
 
-**They are on by default, everywhere.** There is no per-key or per-tool gating: any valid `rymi_` secret key reaches the full write surface. The only switch is `RYMI_MCP_READONLY=1`, which hides every mutating tool at once and is set by whoever *starts* the server — so it protects a local run you configure, not a key you hand out.
+What restrains them depends on which server you're talking to.
 
-- **Hosted** `mcp.rymi.live` — full write surface unless that deployment sets the flag.
-- **Local** `@rymi/mcp` — full write surface unless you start it with `RYMI_MCP_READONLY=1`.
+- **Hosted** `mcp.rymi.live` — tools are filtered by your **tenant role**, on both OAuth and API keys. An `owner`/`admin` sees everything; a `member` gets agent-scoped tools only, with account-scoped writes (billing, keys, numbers, DNC) never registered. `RYMI_MCP_READONLY` does not apply there.
+- **Local** `@rymi/mcp` — no role filtering. Full write surface unless you start it with `RYMI_MCP_READONLY=1`, which hides every mutating tool at once. That flag is set by whoever *starts* the server, so it guards a local run you configure, not a key you hand out.
+
+Either way, role filtering bounds the **tool surface**, not the credential: a key or token stays valid against the REST API directly. Treat MCP access as equivalent to handing over your own account access.
 
 > Carrier connect/disconnect and publishable-key creation/revocation are intentionally **not** exposed over MCP (they enter credentials and change standing configuration) — do those from the dashboard.
 

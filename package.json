@@ -1,6 +1,6 @@
 {
   "name": "@rymi/mcp",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Rymi MCP server \u2014 manage AI voice agents via Model Context Protocol",
   "license": "MIT",
   "author": "Rymi AI <engineering@rymi.live>",
@@ -45,10 +45,10 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.11.1",
     "@rymi/node": "workspace:*",
-    "@rymi/ops-tools": "workspace:*",
     "zod": "^3.23.0"
   },
   "devDependencies": {
+    "@rymi/ops-tools": "workspace:*",
     "tsup": "^8.0.0",
     "typescript": "^5.0.0",
     "vitest": "^1.6.0"
