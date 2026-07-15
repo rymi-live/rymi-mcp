@@ -99,8 +99,10 @@ Run the server on your own machine — it speaks **stdio** by default and talks 
 
 `create_call` and `batch_call` place **real, billable** outbound calls; `publish_agent` flips an agent **live** to end users.
 
-- **Hosted** `mcp.rymi.live` — disabled by default; enable per API key from the dashboard.
-- **Local** `@rymi/mcp` — enabled by default; pass `RYMI_MCP_READONLY=1` (or use a read-only key) to hide all mutating tools.
+**They are on by default, everywhere.** There is no per-key or per-tool gating: any valid `rymi_` secret key reaches the full write surface. The only switch is `RYMI_MCP_READONLY=1`, which hides every mutating tool at once and is set by whoever *starts* the server — so it protects a local run you configure, not a key you hand out.
+
+- **Hosted** `mcp.rymi.live` — full write surface unless that deployment sets the flag.
+- **Local** `@rymi/mcp` — full write surface unless you start it with `RYMI_MCP_READONLY=1`.
 
 > Carrier connect/disconnect and publishable-key creation/revocation are intentionally **not** exposed over MCP (they enter credentials and change standing configuration) — do those from the dashboard.
 
