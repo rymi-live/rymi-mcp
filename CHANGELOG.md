@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2.2.0
+
+Requires `@rymi/node` 2.2.0.
+
 - New tools for a campaign's lead-intake URL: `get_campaign_intake`, `set_campaign_intake`
   (create it, or set `assume_voice_consent` / `default_country`), `rotate_campaign_intake`
   and `disable_campaign_intake`.
