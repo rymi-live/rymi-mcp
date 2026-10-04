@@ -73,7 +73,7 @@ Run the server on your own machine — it speaks **stdio** by default and talks 
 <tr><th>Group</th><th>Tools</th></tr>
 <tr>
 <td><b>Agents</b></td>
-<td><code>list_agents</code> · <code>get_agent</code> · <code>create_agent</code> · <code>update_agent</code> · <code>delete_agent</code> · <code>clone_agent</code> · <code>apply_agent_changes</code> · <code>generate_agent_draft</code> · <code>enrich_company</code> · <code>validate_agent_publish</code> · <code>preview_stack</code></td>
+<td><code>list_agents</code> · <code>get_agent</code> · <code>create_agent</code> · <code>update_agent</code> · <code>delete_agent</code> · <code>clone_agent</code> · <code>apply_agent_changes</code> · <code>generate_agent_draft</code> · <code>enrich_company</code> · <code>validate_agent_publish</code> · <code>preview_stack</code> · <code>publish_agent</code></td>
 </tr>
 <tr>
 <td><b>API tools & secrets</b></td>
@@ -93,11 +93,15 @@ Run the server on your own machine — it speaks **stdio** by default and talks 
 </tr>
 <tr>
 <td><b>Insight</b></td>
-<td><code>get_usage_summary</code> (minutes-based) · <code>list_agent_templates</code> · <code>run_evals</code> · <code>list_eval_runs</code> · <code>get_eval_run</code></td>
+<td><code>get_usage_summary</code> (minutes-based) · <code>list_agent_templates</code> · <code>run_evals</code> · <code>run_eval_suite</code> · <code>list_eval_runs</code> · <code>get_eval_run</code></td>
 </tr>
 <tr>
 <td><b>Calls</b> <sub>(read-only)</sub></td>
 <td><code>list_calls</code> · <code>list_active_calls</code> · <code>get_call</code> · <code>get_call_summary</code> · <code>get_call_transcript</code> · <code>get_call_recording</code> · <code>get_call_queue_stats</code> · <code>reprocess_call</code> · <code>list_calls_for_agent</code></td>
+</tr>
+<tr>
+<td><b>Call control</b></td>
+<td><code>create_call</code> · <code>batch_call</code> · <code>end_call</code> · <code>add_call_participant</code></td>
 </tr>
 <tr>
 <td><b>Numbers</b></td>
@@ -110,6 +114,26 @@ Run the server on your own machine — it speaks **stdio** by default and talks 
 <tr>
 <td><b>Keys</b> <sub>(read-only)</sub></td>
 <td><code>list_publishable_keys</code></td>
+</tr>
+<tr>
+<td><b>Campaigns</b></td>
+<td><code>list_campaigns</code> · <code>get_campaign</code> · <code>get_campaign_report</code> · <code>list_campaign_attempts</code> · <code>list_campaign_suggestions</code> · <code>list_contacts</code> · <code>create_campaign</code> · <code>import_campaign_contacts</code> · <code>launch_campaign</code> · <code>pause_campaign</code> · <code>resume_campaign</code> · <code>accept_campaign_suggestion</code></td>
+</tr>
+<tr>
+<td><b>Lead intake</b></td>
+<td><code>get_campaign_intake</code> · <code>set_campaign_intake</code> · <code>rotate_campaign_intake</code> · <code>disable_campaign_intake</code></td>
+</tr>
+<tr>
+<td><b>Do-Not-Call</b></td>
+<td><code>list_dnc</code> · <code>check_dnc</code> · <code>add_dnc</code> · <code>add_dnc_batch</code> · <code>remove_dnc</code></td>
+</tr>
+<tr>
+<td><b>Webhooks</b></td>
+<td><code>list_webhooks</code> · <code>create_webhook</code> · <code>update_webhook</code> · <code>delete_webhook</code></td>
+</tr>
+<tr>
+<td><b>Billing & cost</b></td>
+<td><code>estimate_call_cost</code> · <code>set_auto_recharge</code> · <code>set_spend_alerts</code></td>
 </tr>
 </table>
 
