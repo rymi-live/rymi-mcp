@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- New tool `set_agent_tools`: switch built-in tools on or off for one agent by tool id
+  or the groups `calendar` and `tickets`. Connected-app tools (calendar, CRM lookup,
+  Freshdesk, WhatsApp, Telegram, shareable assets) are now opt-in per agent, so this is
+  how an agent gets them outside Studio.
+
 ## 2.2.0
 
 Requires `@rymi/node` 2.2.0.

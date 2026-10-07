@@ -76,8 +76,8 @@ Run the server on your own machine — it speaks **stdio** by default and talks 
 <td><code>list_agents</code> · <code>get_agent</code> · <code>create_agent</code> · <code>update_agent</code> · <code>delete_agent</code> · <code>clone_agent</code> · <code>apply_agent_changes</code> · <code>generate_agent_draft</code> · <code>enrich_company</code> · <code>validate_agent_publish</code> · <code>preview_stack</code> · <code>publish_agent</code></td>
 </tr>
 <tr>
-<td><b>API tools & secrets</b></td>
-<td><code>list_agent_tools</code> · <code>add_agent_tool</code> · <code>update_agent_tool</code> · <code>remove_agent_tool</code> · <code>list_tool_secrets</code> · <code>set_tool_secret</code></td>
+<td><b>Agent tools & secrets</b></td>
+<td><code>set_agent_tools</code> · <code>list_agent_tools</code> · <code>add_agent_tool</code> · <code>update_agent_tool</code> · <code>remove_agent_tool</code> · <code>list_tool_secrets</code> · <code>set_tool_secret</code></td>
 </tr>
 <tr>
 <td><b>Share link</b></td>
