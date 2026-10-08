@@ -137,7 +137,7 @@ Run the server on your own machine — it speaks **stdio** by default and talks 
 </tr>
 <tr>
 <td><b>Workspaces</b></td>
-<td><code>list_workspaces</code> · <code>create_workspace</code></td>
+<td><code>list_workspaces</code> · <code>create_workspace</code> · <code>get_workspace_usage</code></td>
 </tr>
 </table>
 
