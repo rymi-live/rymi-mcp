@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- `get_compliance_settings` and `update_compliance_settings` read and change a workspace's calling rules.
+- Every tool takes an optional `workspace` argument, so one connection can act in any workspace it can reach (an agency's client workspaces, for example).
+- New tools `update_workspace` (name, operating country, a client workspace's monthly spend cap), `list_workspace_members`, `add_workspace_member` and `remove_workspace_member`.
+
 ## 2.5.0
 
 Requires `@rymi/node` 2.4.0.

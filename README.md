@@ -63,7 +63,7 @@ Run the server on your own machine — it speaks **stdio** by default and talks 
 }
 ```
 
-> **Options:** `RYMI_MCP_READONLY=1` hides every mutating tool (including `create_call`, `batch_call`, `publish_agent`). `RYMI_WORKSPACE` makes the local server act in that workspace (sent as the `Rymi-Workspace` header). On the hosted endpoint, send the `Rymi-Workspace` header on the HTTP request instead.
+> **Options:** `RYMI_MCP_READONLY=1` hides every mutating tool (including `create_call`, `batch_call`, `publish_agent`). `RYMI_WORKSPACE` makes the local server act in that workspace (sent as the `Rymi-Workspace` header). On the hosted endpoint, send the `Rymi-Workspace` header on the HTTP request instead. Every tool also takes an optional `workspace` argument, so one connection can act in any workspace it can reach, such as an agency's client workspaces.
 >
 > This package speaks **stdio** only. `--transport http` was removed in 2.0.0 — use the hosted endpoint above, which the local server could never match on auth (it has no OAuth, and no per-key tool gating).
 
@@ -137,7 +137,11 @@ Run the server on your own machine — it speaks **stdio** by default and talks 
 </tr>
 <tr>
 <td><b>Workspaces</b></td>
-<td><code>list_workspaces</code> · <code>create_workspace</code> · <code>get_workspace_usage</code></td>
+<td><code>list_workspaces</code> · <code>create_workspace</code> · <code>update_workspace</code> · <code>get_workspace_usage</code> · <code>list_workspace_members</code> · <code>add_workspace_member</code> · <code>remove_workspace_member</code></td>
+</tr>
+<tr>
+<td><b>Compliance settings</b></td>
+<td><code>get_compliance_settings</code> · <code>update_compliance_settings</code></td>
 </tr>
 </table>
 

@@ -1,6 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import Rymi from '@rymi/node';
-import { opsToolCatalog } from '@rymi/ops-tools';
+import { opsToolCatalog, withWorkspaceParam } from '@rymi/ops-tools';
 import { withToolErrors } from './utils/errors.js';
 import pkg from '../package.json';
 
@@ -18,7 +18,7 @@ export function createServer(apiKey: string): McpServer {
     // Readonly mode now gates per-tool on risk (strictly finer than the old
     // module-level gate); the studio harness binds the same catalog to an
     // in-process JWT client (apps/api/src/services/harness/opsClient.ts).
-    for (const tool of opsToolCatalog) {
+    for (const tool of opsToolCatalog.map(withWorkspaceParam)) {
         if (isReadOnly && tool.risk !== 'read') continue;
         server.tool(
             tool.name,
