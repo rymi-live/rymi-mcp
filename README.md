@@ -63,7 +63,7 @@ Run the server on your own machine — it speaks **stdio** by default and talks 
 }
 ```
 
-> **Options:** `RYMI_MCP_READONLY=1` hides every mutating tool (including `create_call`, `batch_call`, `publish_agent`).
+> **Options:** `RYMI_MCP_READONLY=1` hides every mutating tool (including `create_call`, `batch_call`, `publish_agent`). `RYMI_WORKSPACE` makes the local server act in that workspace (sent as the `Rymi-Workspace` header). On the hosted endpoint, send the `Rymi-Workspace` header on the HTTP request instead.
 >
 > This package speaks **stdio** only. `--transport http` was removed in 2.0.0 — use the hosted endpoint above, which the local server could never match on auth (it has no OAuth, and no per-key tool gating).
 
@@ -134,6 +134,10 @@ Run the server on your own machine — it speaks **stdio** by default and talks 
 <tr>
 <td><b>Billing & cost</b></td>
 <td><code>estimate_call_cost</code> · <code>set_auto_recharge</code> · <code>set_spend_alerts</code></td>
+</tr>
+<tr>
+<td><b>Workspaces</b></td>
+<td><code>list_workspaces</code> · <code>create_workspace</code></td>
 </tr>
 </table>
 

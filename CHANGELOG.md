@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 2.4.0
+
+Requires `@rymi/node` 2.3.0.
+
+- New tools `list_workspaces` and `create_workspace`. Set `RYMI_WORKSPACE` in the server's
+  environment to act in another workspace you can reach.
+
 ## 2.3.0
 
 Requires `@rymi/node` 2.2.0.
