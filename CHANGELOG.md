@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 2.5.0
+
+Requires `@rymi/node` 2.4.0.
+
+- `create_workspace` takes `parent` to make a client workspace that the agency pays for.
+- New tool `get_workspace_usage`: calls, minutes and credits for one workspace in a month.
+
 ## 2.4.0
 
 Requires `@rymi/node` 2.3.0.
