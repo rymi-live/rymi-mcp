@@ -137,7 +137,7 @@ Run the server on your own machine — it speaks **stdio** by default and talks 
 </tr>
 <tr>
 <td><b>Workspaces</b></td>
-<td><code>list_workspaces</code> · <code>create_workspace</code> · <code>update_workspace</code> · <code>get_workspace_usage</code> · <code>list_workspace_members</code> · <code>add_workspace_member</code> · <code>remove_workspace_member</code></td>
+<td><code>list_workspaces</code> · <code>create_workspace</code> · <code>update_workspace</code> · <code>delete_workspace</code> · <code>get_workspace_usage</code> · <code>list_workspace_members</code> · <code>add_workspace_member</code> · <code>remove_workspace_member</code></td>
 </tr>
 <tr>
 <td><b>Compliance settings</b></td>

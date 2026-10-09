@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- New tool `delete_workspace`: deletes an empty workspace. Owner only, never your first workspace; answers `workspace_not_empty` with the `blockers` that remain.
+
 ## 2.6.0
 
 Requires `@rymi/node` 2.5.0.
