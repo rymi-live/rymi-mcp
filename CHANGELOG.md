@@ -2,7 +2,9 @@
 
 ## Unreleased
 
-Requires `@rymi/node` with `keys.self()` (the release after 2.6.0).
+## 2.8.0
+
+Requires `@rymi/node` 2.7.0 or later (`keys.self()`).
 
 - **Breaking:** `set_auto_recharge` and `set_spend_alerts` are no longer listed, because the API returns `403` to every API key for billing changes. Top up and change billing in Studio.
 - **Breaking:** workspace roles no longer include `owner`. `add_workspace_member` takes `admin`, `editor`, `client` or `viewer`; `list_workspaces` shows `role: null` for a Billing member with no workspace role.
