@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+Requires `@rymi/node` with `keys.self()` (the release after 2.6.0).
+
+- **Breaking:** `set_auto_recharge` and `set_spend_alerts` are no longer listed, because the API returns `403` to every API key for billing changes. Top up and change billing in Studio.
+- **Breaking:** workspace roles no longer include `owner`. `add_workspace_member` takes `admin`, `editor`, `client` or `viewer`; `list_workspaces` shows `role: null` for a Billing member with no workspace role.
+- Accounts and scoped keys: `list_accounts`, `list_account_members`, `add_account_member`, `remove_account_member`. A secret key lists only the tools its scopes allow: a tool needs the scope of every route it calls (`get_usage_summary` needs `billing:read`; `list_workspaces` and `list_accounts` need none).
+- If `GET /v1/keys/self` fails at startup, the server retries twice, then starts with the read-only tools and a warning on stderr instead of exiting.
+
 ## 2.7.0
 
 Requires `@rymi/node` 2.6.0.

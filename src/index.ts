@@ -29,8 +29,7 @@ if (!apiKey) {
     process.exit(1);
 }
 
-const server = createServer(apiKey);
-runStdio(server).catch((err) => {
-    process.stderr.write(`Fatal: ${err.message}\n`);
+createServer(apiKey).then((server) => runStdio(server)).catch((err) => {
+    process.stderr.write(`Fatal: ${err instanceof Error ? err.message : String(err)}\n`);
     process.exit(1);
 });
