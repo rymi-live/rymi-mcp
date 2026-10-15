@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 2.8.1
+
+Requires `@rymi/node` 2.7.0 or later.
+
+- `add_call_participant` describes dialing and adding a participant to a live call. PSTN additions are billable.
+
 ## 2.8.0
 
 Requires `@rymi/node` 2.7.0 or later (`keys.self()`).
