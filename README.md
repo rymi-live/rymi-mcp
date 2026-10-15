@@ -104,6 +104,10 @@ Run the server on your own machine — it speaks **stdio** by default and talks 
 <td><code>create_call</code> · <code>batch_call</code> · <code>end_call</code> · <code>add_call_participant</code></td>
 </tr>
 <tr>
+<td><b>Task calls</b></td>
+<td><code>place_task_call</code> · <code>wait_for_call</code></td>
+</tr>
+<tr>
 <td><b>Numbers</b></td>
 <td><code>list_numbers</code> · <code>register_number</code> · <code>attach_number</code> · <code>remove_number</code></td>
 </tr>
