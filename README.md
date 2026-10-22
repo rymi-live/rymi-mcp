@@ -155,7 +155,7 @@ Run the server on your own machine — it speaks **stdio** by default and talks 
 
 ### ⚠️ Gated tools
 
-`create_call` and `batch_call` place **real, billable** outbound calls; `publish_agent` flips an agent **live** to end users.
+`place_task_call`, `create_call` and `batch_call` place **real, billable** outbound calls; `publish_agent` flips an agent **live** to end users.
 
 What restrains them depends on which server you're talking to.
 

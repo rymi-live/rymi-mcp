@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- `place_task_call` calls a number in `hi-IN` or `en-IN` from plain instructions and extracts the `return_fields` you list, with no agent setup. It creates a **Task caller** agent per language in the workspace on first use.
+- **Breaking:** `place_task_call` now requires an `agent_id` parameter and places calls only through an agent that has `features.task_calls_enabled: true`. It no longer creates or publishes agents automatically, and no longer takes a `language` parameter (the agent's stack determines the language).
 - `wait_for_call` waits up to `timeout_s` (5 to 240, default 90) for a call and its post-call results, then returns status, summary and fields.
 
 ## 2.8.1
