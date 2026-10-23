@@ -5,6 +5,12 @@
 - **Breaking:** `place_task_call` now requires an `agent_id` parameter and places calls only through an agent that has `features.task_calls_enabled: true`. It no longer creates or publishes agents automatically, and no longer takes a `language` parameter (the agent's stack determines the language).
 - `wait_for_call` waits up to `timeout_s` (5 to 240, default 90) for a call and its post-call results, then returns status, summary and fields.
 
+## 2.8.2
+
+Requires `@rymi/node` 2.7.2 or later.
+
+- `apply_agent_changes` supports `background_sound`, `background_sound_volume`, `background_sound_url`, and `voice_focus` (`AGENT_CONFIG_SCHEMA_VERSION = '2026-10-23'`).
+
 ## 2.8.1
 
 Requires `@rymi/node` 2.7.0 or later.
