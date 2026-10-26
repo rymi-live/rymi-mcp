@@ -1,6 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import Rymi from '@rymi/node';
-import { keyAllowsTool, opsToolCatalog, withWorkspaceParam } from '@rymi/ops-tools';
+import { keyAllowsTool, opsToolCatalog, toolAnnotations, withWorkspaceParam } from '@rymi/ops-tools';
 import { withToolErrors } from './utils/errors.js';
 import pkg from '../package.json';
 
@@ -61,6 +61,7 @@ export async function createServer(
             tool.name,
             tool.description,
             tool.input,
+            toolAnnotations(tool),
             withToolErrors(async (params: Record<string, unknown>) => {
                 const result = await tool.run(rymi, params as never);
                 return { content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }] };

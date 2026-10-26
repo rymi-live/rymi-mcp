@@ -1,0 +1,40 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.rymi-live/rymi-mcp",
+  "title": "Rymi",
+  "description": "Build, call and manage AI voice agents on real phone calls: agents, calls, campaigns, numbers.",
+  "repository": {
+    "url": "https://github.com/rymi-live/rymi-mcp",
+    "source": "github"
+  },
+  "websiteUrl": "https://docs.rymi.live/api/mcp",
+  "version": "2.8.2",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@rymi/mcp",
+      "version": "2.8.2",
+      "runtimeHint": "npx",
+      "transport": { "type": "stdio" },
+      "environmentVariables": [
+        {
+          "name": "RYMI_API_KEY",
+          "description": "Rymi secret key (rymi_...). Create one in Studio under Settings, API Keys.",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "RYMI_MCP_READONLY",
+          "description": "Set to 1 to expose read-only tools only.",
+          "isRequired": false
+        }
+      ]
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://mcp.rymi.live/mcp"
+    }
+  ]
+}

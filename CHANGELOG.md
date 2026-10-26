@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Every tool carries MCP annotations: `readOnlyHint` for reads, `destructiveHint` for deletes, removals and `end_call`.
+- Adds `mcpName` (`io.github.rymi-live/rymi-mcp`) and `server.json` for the official MCP Registry.
 - **Breaking:** `place_task_call` now requires an `agent_id` parameter and places calls only through an agent that has `features.task_calls_enabled: true`. It no longer creates or publishes agents automatically, and no longer takes a `language` parameter (the agent's stack determines the language).
 - `wait_for_call` waits up to `timeout_s` (5 to 240, default 90) for a call and its post-call results, then returns status, summary and fields.
 
