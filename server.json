@@ -8,12 +8,12 @@
     "source": "github"
   },
   "websiteUrl": "https://docs.rymi.live/api/mcp",
-  "version": "2.8.2",
+  "version": "2.9.0",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "@rymi/mcp",
-      "version": "2.8.2",
+      "version": "2.9.0",
       "runtimeHint": "npx",
       "transport": { "type": "stdio" },
       "environmentVariables": [
