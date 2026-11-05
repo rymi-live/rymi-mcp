@@ -1,5 +1,12 @@
 # @rymi/mcp
 
+## 2.10.0
+
+Requires `@rymi/node` 2.8.0 or later.
+
+- `create_call` takes `test: true`. Rymi stores the call as a test (`metadata.source` `mcp_test`), caps it at 5 minutes, and dials from the shared test number when you omit `from_number`. The destination must be a number you confirmed on WhatsApp.
+- Tools carry `idempotentHint`, and tools that overwrite data are flagged `destructiveHint`.
+
 ## 2.9.0
 
 Requires `@rymi/node` 2.7.2 or later.
