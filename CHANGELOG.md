@@ -1,5 +1,12 @@
 # @rymi/mcp
 
+## Unreleased
+
+Pairs with the `@rymi/node` release that adds `phoneConfirmation.start` and `phoneConfirmation.status`.
+
+- `start_test_number_confirmation` opens WhatsApp confirmation for a shared-test-line destination and returns the `wa.me` link plus the exact message that phone must send. It does not confirm the number.
+- `get_test_number_confirmation` reports whether that number is confirmed for the API key's user. `create_call` with `test: true` returns `phone_not_confirmed` until it is.
+
 ## 2.10.0
 
 Requires `@rymi/node` 2.8.0 or later.
