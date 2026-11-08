@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+Requires the next `@rymi/node` release.
+
+- `request_test_number_code` sends a WhatsApp code to a shared-test-line destination and returns delivery, expiry, resend cooldown and the secure entry page. It never returns the code.
+- `submit_test_number_code` returns the page where you type the code, signed in to Studio. It takes no code, so the code stays out of the transcript.
+- `get_test_number_confirmation` also reports a code that is waiting to be entered.
 - `create_call` accepts `personal_call`, the owner's approval for one regular call through a personal assistant agent.
 
 ## 2.11.0

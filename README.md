@@ -101,7 +101,7 @@ Run the server on your own machine — it speaks **stdio** by default and talks 
 </tr>
 <tr>
 <td><b>Call control</b></td>
-<td><code>create_call</code> · <code>batch_call</code> · <code>end_call</code> · <code>add_call_participant</code> · <code>start_test_number_confirmation</code> · <code>get_test_number_confirmation</code></td>
+<td><code>create_call</code> · <code>batch_call</code> · <code>end_call</code> · <code>add_call_participant</code> · <code>start_test_number_confirmation</code> · <code>get_test_number_confirmation</code> · <code>request_test_number_code</code> · <code>submit_test_number_code</code></td>
 </tr>
 <tr>
 <td><b>Task calls</b></td>
