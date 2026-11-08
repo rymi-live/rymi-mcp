@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- `create_call` accepts `personal_call`, the owner's approval for one regular call through a personal assistant agent.
+
 ## 2.11.0
 
 Requires `@rymi/node` 2.9.0 or later.
