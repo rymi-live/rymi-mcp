@@ -1,4 +1,8 @@
-export type ToolResult = { content: Array<{ type: 'text'; text: string }>; isError?: boolean };
+export type ToolResult = {
+    content: Array<{ type: 'text'; text: string }>;
+    structuredContent?: Record<string, unknown>;
+    isError?: boolean;
+};
 
 export function handleMcpError(err: unknown): ToolResult {
     const e = err as { message?: string; code?: string; status?: number };

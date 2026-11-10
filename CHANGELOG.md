@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- `get_call`, `create_call`, `place_task_call` and `wait_for_call` render an interactive call card (MCP App `ui://rymi/call-card.html`) in hosts that support MCP Apps: live status, duration, summary, extracted fields and the recording. Those tools now also return `structuredContent`. Other hosts get the same text result.
+
 ## 2.12.0
 
 Requires `@rymi/node` 2.10.0 or later.

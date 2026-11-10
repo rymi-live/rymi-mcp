@@ -1,6 +1,15 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import Rymi from '@rymi/node';
-import { keyAllowsTool, opsToolCatalog, toolAnnotations, withWorkspaceParam } from '@rymi/ops-tools';
+import {
+    MCP_APP_MIME,
+    keyAllowsTool,
+    opsToolCatalog,
+    opsToolResult,
+    opsWidgets,
+    toolAnnotations,
+    toolWidgetMeta,
+    withWorkspaceParam,
+} from '@rymi/ops-tools';
 import { withToolErrors } from './utils/errors.js';
 import pkg from '../package.json';
 
@@ -57,16 +66,25 @@ export async function createServer(
     for (const tool of opsToolCatalog.map(withWorkspaceParam)) {
         if (isReadOnly && tool.risk !== 'read') continue;
         if (key && !keyAllowsTool(tool, key)) continue;
-        server.tool(
+        server.registerTool(
             tool.name,
-            tool.description,
-            tool.input,
-            toolAnnotations(tool),
-            withToolErrors(async (params: Record<string, unknown>) => {
-                const result = await tool.run(rymi, params as never);
-                return { content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }] };
-            })
+            {
+                description: tool.description,
+                inputSchema: tool.input,
+                annotations: toolAnnotations(tool),
+                _meta: toolWidgetMeta(tool.name),
+            },
+            withToolErrors(async (params: Record<string, unknown>) =>
+                opsToolResult(tool.name, await tool.run(rymi, params as never))
+            )
         );
+    }
+
+    // MCP Apps widgets the tools above point at (ui://rymi/...).
+    for (const widget of opsWidgets) {
+        server.registerResource(widget.name, widget.uri, { mimeType: MCP_APP_MIME }, async () => ({
+            contents: [{ uri: widget.uri, mimeType: MCP_APP_MIME, text: widget.html, _meta: widget.meta }],
+        }));
     }
 
     return server;

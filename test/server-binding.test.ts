@@ -119,3 +119,20 @@ describe('when GET /v1/keys/self fails', () => {
         expect(names).not.toContain('create_call');
     });
 });
+
+describe('MCP Apps call card', () => {
+    it('get_call points at the call card and the card is served as an MCP App', async () => {
+        mockSelf({ kind: 'account', scopes: [], legacy: true, account_id: 'a', workspace_id: null });
+        const server = await createServer('rymi_dummy_key_for_registration_only');
+        const internals = server as unknown as {
+            _registeredTools: Record<string, { _meta?: Record<string, any> }>;
+            _registeredResources: Record<string, { readCallback: (uri: URL, extra: unknown) => Promise<any> }>;
+        };
+        expect(internals._registeredTools.get_call._meta?.ui?.resourceUri).toBe('ui://rymi/call-card.html');
+        expect(internals._registeredTools.list_calls._meta).toBeUndefined();
+        const res = internals._registeredResources['ui://rymi/call-card.html'];
+        const read = await res.readCallback(new URL('ui://rymi/call-card.html'), {});
+        expect(read.contents[0].mimeType).toBe('text/html;profile=mcp-app');
+        expect(read.contents[0].text).toContain('ui/initialize');
+    });
+});
