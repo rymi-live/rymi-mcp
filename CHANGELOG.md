@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Cards follow the host's light or dark theme (`hostContext.theme`, then `prefers-color-scheme`) using the Studio role tokens.
 - New cards: campaign report under `get_campaign` and `get_campaign_report`, campaign suggestions under `list_campaign_suggestions` and `accept_campaign_suggestion`, usage and plan under `get_usage_summary` and `get_plan`.
 - Cards: the calls list names each call's agent and re-checks live calls with `get_call` until they end; voice picker search and gender filter call `list_voices` with `query` / `gender` when there are more voices than the first page; the agent card plays its voice preview.
 
