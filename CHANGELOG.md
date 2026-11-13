@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.15.0
+
 Requires `@rymi/node` 2.12.0 or later.
 
 - `get_plan` reports your monthly plan, discount, renewal date and minutes left, lists the plans on sale, and says when the next plan would have cost less over the last 30 days. Before monthly plans go on sale it says they are not available yet.
