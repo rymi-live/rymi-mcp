@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- New MCP App cards: a voice picker under `list_voices`, an agent card under `get_agent`, `create_agent`, `update_agent`, `clone_agent`, `validate_agent_publish` and `publish_agent`, and a calls list under `list_calls`, `list_calls_for_agent` and `list_active_calls`. The call card is redesigned and now shows the live transcript, an elapsed clock and the post-call outcome. Card tool results carry `_meta["rymi/tool"]`; only the call tools also return `structuredContent`. Other hosts get the same text result.
 - `list_agents` returns a short summary per agent instead of the full record (no prompts, `provider_config` or published snapshot); use `get_agent` for those.
 - `list_voices` returns 50 voices a page and takes `gender`, `query`, `limit` and `offset`; `total` counts every match.
 
