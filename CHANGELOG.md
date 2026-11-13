@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Cards: the calls list names each call's agent and re-checks live calls with `get_call` until they end; voice picker search and gender filter call `list_voices` with `query` / `gender` when there are more voices than the first page; the agent card plays its voice preview.
+
 ## 2.16.0
 
 Requires `@rymi/node` 2.12.0 or later.
