@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+Requires `@rymi/node` 2.12.0 or later.
+
+- `get_plan` reports your monthly plan, discount, renewal date and minutes left, lists the plans on sale, and says when the next plan would have cost less over the last 30 days. Before monthly plans go on sale it says they are not available yet.
+- `get_plan_studio_link` returns the Studio billing link for upgrading, downgrading or cancelling. Plan changes happen in Studio, not through MCP.
+
 ## 2.14.0
 
 Requires `@rymi/node` 2.11.0 or later.

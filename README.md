@@ -137,7 +137,7 @@ Run the server on your own machine — it speaks **stdio** by default and talks 
 </tr>
 <tr>
 <td><b>Billing & cost</b></td>
-<td><code>estimate_call_cost</code> · <code>set_auto_recharge</code> · <code>set_spend_alerts</code></td>
+<td><code>estimate_call_cost</code> · <code>set_auto_recharge</code> · <code>set_spend_alerts</code> · <code>get_plan</code> · <code>get_plan_studio_link</code></td>
 </tr>
 <tr>
 <td><b>Accounts</b></td>
