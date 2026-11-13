@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- `list_agents` returns a short summary per agent instead of the full record (no prompts, `provider_config` or published snapshot); use `get_agent` for those.
+- `list_voices` returns 50 voices a page and takes `gender`, `query`, `limit` and `offset`; `total` counts every match.
+
 ## 2.15.0
 
 Requires `@rymi/node` 2.12.0 or later.
