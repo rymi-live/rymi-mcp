@@ -73,7 +73,7 @@ Run the server on your own machine — it speaks **stdio** by default and talks 
 <tr><th>Group</th><th>Tools</th></tr>
 <tr>
 <td><b>Agents</b></td>
-<td><code>list_agents</code> · <code>get_agent</code> · <code>create_agent</code> · <code>update_agent</code> · <code>delete_agent</code> · <code>clone_agent</code> · <code>apply_agent_changes</code> · <code>generate_agent_draft</code> · <code>enrich_company</code> · <code>validate_agent_publish</code> · <code>preview_stack</code> · <code>publish_agent</code></td>
+<td><code>list_agents</code> · <code>get_agent</code> · <code>create_agent</code> · <code>update_agent</code> · <code>delete_agent</code> · <code>clone_agent</code> · <code>apply_agent_changes</code> · <code>generate_agent_draft</code> · <code>enrich_company</code> · <code>validate_agent_publish</code> · <code>preview_stack</code> · <code>publish_agent</code> · <code>get_pending_publish</code></td>
 </tr>
 <tr>
 <td><b>Agent tools & secrets</b></td>
@@ -112,8 +112,8 @@ Run the server on your own machine — it speaks **stdio** by default and talks 
 <td><code>list_numbers</code> · <code>register_number</code> · <code>attach_number</code> · <code>remove_number</code></td>
 </tr>
 <tr>
-<td><b>Telephony</b> <sub>(read-only)</sub></td>
-<td><code>telephony_status</code> · <code>list_telephony_numbers</code></td>
+<td><b>Telephony</b></td>
+<td><code>telephony_status</code> · <code>list_telephony_numbers</code> · <code>get_phone_line</code> · <code>request_phone_line</code></td>
 </tr>
 <tr>
 <td><b>Keys</b> <sub>(read-only)</sub></td>
@@ -129,7 +129,7 @@ Run the server on your own machine — it speaks **stdio** by default and talks 
 </tr>
 <tr>
 <td><b>Do-Not-Call</b></td>
-<td><code>list_dnc</code> · <code>check_dnc</code> · <code>add_dnc</code> · <code>add_dnc_batch</code> · <code>remove_dnc</code></td>
+<td><code>list_dnc</code> · <code>check_dnc</code> · <code>add_dnc</code> · <code>add_dnc_batch</code> · <code>remove_dnc</code> · <code>record_contact_consent</code></td>
 </tr>
 <tr>
 <td><b>Webhooks</b></td>

@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 2.14.0
+
+Requires `@rymi/node` 2.11.0 or later.
+
+- `get_phone_line` and `request_phone_line` show and start a phone line from Rymi.
+- `get_pending_publish` shows whether an agent edit on a phone line from Rymi is still held for review.
+- `record_contact_consent` records voice consent for a phone number with the exact wording the person saw.
+
 ## 2.13.0
 
 - `get_call`, `create_call`, `place_task_call` and `wait_for_call` render an interactive call card (MCP App `ui://rymi/call-card.html`) in hosts that support MCP Apps: live status, duration, summary, extracted fields and the recording. Those tools now also return `structuredContent`. Other hosts get the same text result.
