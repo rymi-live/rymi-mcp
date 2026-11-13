@@ -167,6 +167,22 @@ Either way, role filtering bounds the **tool surface**, not the credential: a ke
 
 > Carrier connect/disconnect and publishable-key creation/revocation are intentionally **not** exposed over MCP (they enter credentials and change standing configuration) — do those from the dashboard.
 
+### Cards
+
+In hosts that render [MCP Apps](https://github.com/modelcontextprotocol/ext-apps), such as Claude, ChatGPT and VS Code, these tools show an interactive card under their result. Other hosts get the same JSON text.
+
+| Card | Tools |
+|---|---|
+| Call: live transcript and clock, then recording, outcome and summary | `get_call`, `create_call`, `place_task_call`, `wait_for_call` |
+| Voice picker: play previews, search, pick a voice | `list_voices` |
+| Agent: status, models, settings, publish blockers, Studio link | `get_agent`, `create_agent`, `update_agent`, `clone_agent`, `validate_agent_publish`, `publish_agent` |
+| Calls list: status, sentiment, live calls, inline summaries | `list_calls`, `list_calls_for_agent`, `list_active_calls` |
+| Campaign report: goal funnel, cost in credits, best hour, outcomes | `get_campaign`, `get_campaign_report` |
+| Campaign suggestions: each change against the current value, Accept | `list_campaign_suggestions`, `accept_campaign_suggestion` |
+| Usage and plan: minutes left, quota bars, plans | `get_usage_summary`, `get_plan` |
+
+Cards follow the host's light or dark theme. See [Cards](https://docs.rymi.live/api/mcp#cards) for what each shows.
+
 ## ⚙️ Configuring an agent
 
 `create_agent` and `update_agent` accept the full agent configuration surface. Always call `list_llm_options` first to get valid model and voice IDs.
