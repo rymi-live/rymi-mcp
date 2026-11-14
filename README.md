@@ -151,6 +151,10 @@ Run the server on your own machine — it speaks **stdio** by default and talks 
 <td><b>Compliance settings</b></td>
 <td><code>get_compliance_settings</code> · <code>update_compliance_settings</code></td>
 </tr>
+<tr>
+<td><b>Bug reports</b></td>
+<td><code>report_bug</code> · <code>list_bug_reports</code></td>
+</tr>
 </table>
 
 ### ⚠️ Gated tools

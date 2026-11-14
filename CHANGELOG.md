@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- `report_bug` and `list_bug_reports`: report a bug from your AI client and follow its review status. Reports go to the Rymi team as `pending_review`.
+
 ## 2.17.0
 
 Requires `@rymi/node` 2.12.0 or later.
