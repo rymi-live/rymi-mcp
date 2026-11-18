@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Mark `enrich_company` and `generate_agent_draft` as write tools (hidden under `RYMI_MCP_READONLY=1`), mark `create_webhook`, `update_webhook`, `set_tool_secret`, `set_share_link`, `add_account_member`, and `add_workspace_member` with `destructiveHint`, add an untrusted-text data warning to caller/external text tools, and omit display names from the voice picker chat message.
+- Reject non-identifier characters in MCP resource ID inputs (`call_id`, `campaign_id`, `suggestion_id`, webhook `id`, `source_id`, `change_id`, `run_id`, `agent_id`).
+
 ## 2.18.0
 
 Requires `@rymi/node` 2.13.0 or later.

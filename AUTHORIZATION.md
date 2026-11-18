@@ -259,11 +259,15 @@ storage — is a valid MCP credential. Verify via JWKS, then resolve `sub` →
 ⚠️ **Audience binding is not achievable today.** RFC 8707 resource indicators
 and the MCP spec both want a token scoped to `https://api.rymi.live/mcp` and
 rejected everywhere else. Supabase's token is not audience-bound to the
-resource, so an MCP connector token is *also* a valid credential against the
-entire Rymi REST API. Consequence: **a token minted for Claude bypasses every
-tool-level control in §5/§6** by calling the API directly. Tool gating in the
-MCP binding is therefore UX, not containment. Accept this knowingly or don't
-ship the OAuth path. Revisit when Supabase supports resource indicators.
+resource, so an MCP connector token also authenticates against the Rymi REST
+API. To contain what a connected app can do if its token is used directly
+against `/v1/*`, `middleware/workspaceSwitch.ts` checks `request.oauthClientId`
+(populated from the JWT `client_id` claim) and rejects `session` routes
+(except `GET /v1/auth/me`), `keys:write` routes (minting or revoking secret or
+publishable keys), and non-read `billing` routes with `403 oauth_forbidden`.
+`createCall.ts` also refuses `metadata.source = "studio_test_panel"` when
+`oauthClientId` is set, so an OAuth token cannot bypass MCP test-call marking.
+Revisit full resource-indicator audience binding when Supabase supports RFC 8707.
 
 ### 7.6 Authority: role, not scope
 
