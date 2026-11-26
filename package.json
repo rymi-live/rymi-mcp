@@ -1,7 +1,7 @@
 {
   "name": "@rymi/mcp",
   "mcpName": "io.github.rymi-live/rymi-mcp",
-  "version": "2.19.0",
+  "version": "2.20.0",
   "description": "Rymi MCP server: build voice agents and place phone calls from Claude, Cursor or ChatGPT.",
   "license": "MIT",
   "author": "Rymi AI <engineering@rymi.live>",

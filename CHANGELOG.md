@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 2.20.0
+
+Requires `@rymi/node` 2.15.0 or later.
+
+- Plan tools use the new monthly plans: Solo ($9), Team ($49) and Scale ($199). `starter` and `business` are no longer accepted.
+
 ## 2.19.0
 
 Requires `@rymi/node` 2.14.0 or later.
