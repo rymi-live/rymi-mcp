@@ -129,7 +129,8 @@ describe('MCP Apps call card', () => {
             _registeredResources: Record<string, { readCallback: (uri: URL, extra: unknown) => Promise<any> }>;
         };
         expect(internals._registeredTools.get_call._meta?.ui?.resourceUri).toBe('ui://rymi/call-card.html');
-        expect(internals._registeredTools.list_calls._meta).toBeUndefined();
+        expect(internals._registeredTools.list_calls._meta?.ui?.resourceUri).toBe('ui://rymi/calls-list.html');
+        expect(internals._registeredTools.list_agents._meta).toBeUndefined();
         const res = internals._registeredResources['ui://rymi/call-card.html'];
         const read = await res.readCallback(new URL('ui://rymi/call-card.html'), {});
         expect(read.contents[0].mimeType).toBe('text/html;profile=mcp-app');
