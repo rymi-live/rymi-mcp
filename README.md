@@ -113,7 +113,7 @@ Run the server on your own machine — it speaks **stdio** by default and talks 
 </tr>
 <tr>
 <td><b>Telephony</b></td>
-<td><code>telephony_status</code> · <code>list_telephony_numbers</code> · <code>get_phone_line</code> · <code>request_phone_line</code></td>
+<td><code>telephony_status</code> · <code>list_telephony_numbers</code> · <code>get_phone_line</code> · <code>request_phone_line</code> · <code>accept_phone_line_terms</code> · <code>activate_phone_line</code> · <code>release_phone_line</code></td>
 </tr>
 <tr>
 <td><b>Keys</b> <sub>(read-only)</sub></td>
