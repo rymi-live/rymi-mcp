@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2.21.0
+
+Requires `@rymi/node` 2.16.0 or later.
+
 - `accept_phone_line_terms`, `activate_phone_line` and `release_phone_line` finish buying a Rymi number from chat and release it. India KYC documents still go through Studio.
 
 ## 2.20.0
